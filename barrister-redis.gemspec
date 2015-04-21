@@ -20,4 +20,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'redis', '~> 3.0'
   spec.add_dependency 'barrister', '~> 0'
+
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'fakeredis'
+  spec.add_development_dependency 'minitest'
 end

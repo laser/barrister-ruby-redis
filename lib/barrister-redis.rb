@@ -6,11 +6,14 @@ module Barrister
 
   class RedisTransport
 
+    attr_accessor :client, :timeout
+
     def initialize(list_name, options={})
       options = {
         database_url: 'redis://localhost:6379'
       }.merge(options)
 
+      @timeout = options[:timeout] || 30
       @list_name = list_name
       @client = ::Redis.connect url: options[:database_url]
     end
@@ -26,7 +29,9 @@ module Barrister
       @client.lpush(@list_name, JSON.generate(request))
 
       # pop last element off our list in a blocking fashion
-      channel, response = @client.brpop(request['reply_to'], timeout=30)
+      channel, response = @client.brpop(request['reply_to'], timeout)
+
+      return {"jsonrpc"=>"2.0", "result"=> []}  unless channel and response
 
       JSON.parse(response)['message']
     end
